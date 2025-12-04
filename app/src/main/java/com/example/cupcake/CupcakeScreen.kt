@@ -118,7 +118,7 @@ fun CupcakeApp(
                 SelectOptionScreen(
                     subtotal = uiState.price,
                     onNextButtonClicked = { navController.navigate(CupcakeScreen.Pickup.name)},
-                    onCancelButtonClicked = {},
+                    onCancelButtonClicked = { cancelOrderAndNavigateToStart(viewModel, navController) },
                     options = DataSource.flavors.map { id -> context.resources.getString(id) },
                     onSelectionChanged = { viewModel.setFlavor(it) },
                     modifier = Modifier
@@ -129,7 +129,7 @@ fun CupcakeApp(
                 SelectOptionScreen(
                     subtotal = uiState.price,
                     onNextButtonClicked = { navController.navigate(CupcakeScreen.Summary.name)},
-                    onCancelButtonClicked = {},
+                    onCancelButtonClicked = { cancelOrderAndNavigateToStart(viewModel, navController)},
                     options = uiState.pickupOptions,
                     onSelectionChanged = { viewModel.setDate(it) },
                     modifier = Modifier
@@ -140,11 +140,19 @@ fun CupcakeApp(
                 OrderSummaryScreen(
                     orderUiState = uiState,
                     onSendButtonClicked = { subject: String, summary: String -> },
-                    onCancelButtonClicked = {},
+                    onCancelButtonClicked = { cancelOrderAndNavigateToStart(viewModel, navController)},
                     modifier = Modifier
                         .fillMaxHeight()
                 )
             }
         }
     }
+}
+
+private fun cancelOrderAndNavigateToStart(
+    viewModel: OrderViewModel,
+    navController: NavHostController
+) {
+    viewModel.resetOrder()
+    navController.popBackStack(CupcakeScreen.Start.name, inclusive = false)
 }
